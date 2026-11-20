@@ -22,7 +22,7 @@ def short(text, n=80):
 
 def rel(path):
     try:
-        return str(Path(path).resolve().relative_to(ROOT.resolve()))
+        return Path(path).resolve().relative_to(ROOT.resolve()).as_posix()
     except (ValueError, OSError):
         return Path(str(path)).name
 
