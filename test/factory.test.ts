@@ -92,7 +92,7 @@ describe("build", () => {
     build(dir, { say: quiet });
     const again = build(dir, { say: quiet });
     expect(again.log.write).toEqual([]);
-    edit(dir, (s) => s.replace('[[roles]]\nuse = "qa-engineer"\n', ""));
+    edit(dir, (s) => s.replace(/\[\[roles\]\]\r?\nuse = "qa-engineer"\r?\n/, ""));
     const dropped = build(dir, { say: quiet });
     expect(dropped.log["remove-stale"]).toContain(".claude/agents/qa-engineer.md");
   });
