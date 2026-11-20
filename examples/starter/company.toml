@@ -1,0 +1,52 @@
+# company.toml: the whole company is defined here. Edit, then:
+#   python3 <factory>/factory.py build .
+# Roles: `use` a library role and override fields, or `*_add` to extend lists
+# (skills_add, owns_add, responsibilities_add, never_add, done_add, tools_add).
+# Plug your own roles/skills/workflows into custom/roles, custom/skills, custom/workflows.
+
+[company]
+name = "Acme"
+mission = "<one sentence: who you help and with what>"
+founder_title = "Founder"
+bet = """
+<the current product bet in 2-3 sentences>
+"""
+icp = """
+<who the first customers are, and who they are not>
+"""
+principles = [
+  "Talk to customers before building more.",
+  "Ship the smallest thing that proves a point.",
+]
+
+[orchestrator]
+title = "Chief of Staff"
+
+[taskboard]
+enabled = false        # true = use the Taskboard MCP; false = company/board.md
+prefix = "ACME"
+
+[defaults]
+model = "sonnet"
+
+[workflows]
+use = ["standup", "kickoff", "approvals", "weekly-review", "hire"]
+
+[[goals]]
+objective = "<objective for this cycle>"
+key_results = ["<measurable result by YYYY-MM-DD>"]
+
+[[roles]]
+use = "product-manager"
+
+[[roles]]
+use = "engineer"
+
+[[roles]]
+use = "qa-engineer"
+
+[[roles]]
+use = "market-researcher"
+
+[[roles]]
+use = "growth-marketer"
