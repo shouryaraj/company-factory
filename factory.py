@@ -421,13 +421,17 @@ ONCE_FILES = {
 # ---------- build ----------
 
 OFFICE_EVENTS = ["SessionStart", "UserPromptSubmit", "PreToolUse", "PostToolUse", "PostToolUseFailure",
-                 "SubagentStart", "SubagentStop", "Stop", "Notification"]
+                 "SubagentStart", "SubagentStop", "Stop", "Notification", "SessionEnd"]
+# Claude Code kills async hooks when a `claude -p` run exits, so end-of-turn events record synchronously (~50 ms once per turn).
+OFFICE_SYNC = {"Stop", "SessionEnd"}
 
 
 def office_settings():
-    """Project hooks that feed the office. Async, so they never block a tool call."""
-    hook = {"type": "command", "command": 'python3 "${CLAUDE_PROJECT_DIR}/.claude/hooks/office_event.py"', "async": True}
-    return json.dumps({"hooks": {ev: [{"matcher": "*", "hooks": [hook]} if "Tool" in ev else {"hooks": [hook]}]
+    """Project hooks that feed the office. Async where it matters, so they never block a tool call."""
+    def hook(ev):
+        h = {"type": "command", "command": 'python3 "${CLAUDE_PROJECT_DIR}/.claude/hooks/office_event.py"'}
+        return h if ev in OFFICE_SYNC else h | {"async": True}
+    return json.dumps({"hooks": {ev: [{"matcher": "*", "hooks": [hook(ev)]} if "Tool" in ev else {"hooks": [hook(ev)]}]
                                  for ev in OFFICE_EVENTS}}, indent=2) + "\n"
 
 

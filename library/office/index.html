@@ -342,6 +342,11 @@ function applyEvent(e, live) {
       break;
     }
     case "SessionStart": line = [`session ${e.label || "started"}`, "chief"]; break;
+    case "SessionEnd": {
+      for (const [id, p] of people) { if (p.kind === "guest") { if (live) { p.leaving = true; p.go({ x: layout.rooms[1].doorX, y: layout.rooms[1].corridorY }); } else people.delete(id); } else { p.status = "idle"; p.activity = ""; } }
+      line = [`session ended${e.label ? " (" + e.label + ")" : ""}`, "chief"];
+      break;
+    }
   }
   if (line) { feed.unshift({ ts: e.ts, text: line[0], id: line[1] }); feed.length = Math.min(feed.length, 80); }
 }

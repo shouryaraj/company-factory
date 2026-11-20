@@ -72,7 +72,9 @@ class Build(unittest.TestCase):
             with redirect_stdout(io.StringIO()):
                 factory.build(d)
             settings = json.loads((d / ".claude/settings.json").read_text())
-            self.assertTrue(all(h["hooks"][0]["async"] for hs in settings["hooks"].values() for h in hs))
+            hooks = {ev: hs[0]["hooks"][0] for ev, hs in settings["hooks"].items()}
+            self.assertTrue(hooks["PreToolUse"]["async"])
+            self.assertNotIn("async", hooks["Stop"])  # must survive `claude -p` exiting
             self.assertTrue((d / ".claude/hooks/office_event.py").exists())
             self.assertEqual((d / ".office/.gitignore").read_text().splitlines()[-1], "*")
 

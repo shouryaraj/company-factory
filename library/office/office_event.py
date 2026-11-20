@@ -67,6 +67,8 @@ def main():
         out |= {"label": short(e.get("message"), 90), "kind": e.get("notification_type", "")}
     elif ev == "SessionStart":
         out["label"] = e.get("source", "")
+    elif ev == "SessionEnd":
+        out["label"] = e.get("reason", "")
     LOG.parent.mkdir(parents=True, exist_ok=True)
     if LOG.exists() and LOG.stat().st_size > MAX_BYTES:
         tail = LOG.read_bytes()[-MAX_BYTES // 2:]
