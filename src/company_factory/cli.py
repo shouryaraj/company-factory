@@ -415,7 +415,7 @@ def render_org_chart(cfg, ctx):
 def render_agent(role, cfg, ctx):
     skills = []
     for s in role["skills"]:
-        desc = frontmatter_field(find("skills", s, cfg["_dir"]).read_text(), "description")
+        desc = frontmatter_field(find("skills", s, cfg["_dir"]).read_text(encoding="utf-8"), "description")
         skills.append(f"`{s}` (`.claude/skills/{s}/SKILL.md`): {desc}")
     skills += [f"`{s}` (marketplace plugin; use it with the Skill tool when the work calls for it)" for s in role["plugin_skills"]]
     tools = f"tools: {', '.join(role['tools'])}\n" if role["tools"] else ""
@@ -505,18 +505,18 @@ def plan(company_dir, cfg):
         "company/operating-rules.md": render_rules(cfg, ctx),
         "company/charter.md": render_charter(cfg, ctx),
         "company/org-chart.md": render_org_chart(cfg, ctx),
-        "handoffs/TEMPLATE.md": GEN_NOTE + "\n" + (LIB / "handoff-template.md").read_text(),
+        "handoffs/TEMPLATE.md": GEN_NOTE + "\n" + (LIB / "handoff-template.md").read_text(encoding="utf-8"),
     }
     for role in cfg["roles"]:
         gen[f".claude/agents/{role['id']}.md"] = render_agent(role, cfg, ctx)
     for name in cfg["workflows"]["use"]:
-        gen[f".claude/commands/{name}.md"] = sub(find("workflows", name, company_dir).read_text(), ctx)
+        gen[f".claude/commands/{name}.md"] = sub(find("workflows", name, company_dir).read_text(encoding="utf-8"), ctx)
     skill_dirs = {s: find("skills", s, company_dir).parent for r in cfg["roles"] for s in r["skills"]}
     for name, src in skill_dirs.items():
         for f in src.rglob("*"):
             if f.is_file():
-                gen[f".claude/skills/{name}/{f.relative_to(src)}"] = f.read_text()
-    gen[".claude/hooks/office_event.py"] = (LIB / "office" / "office_event.py").read_text()
+                gen[f".claude/skills/{name}/{f.relative_to(src)}"] = f.read_text(encoding="utf-8")
+    gen[".claude/hooks/office_event.py"] = (LIB / "office" / "office_event.py").read_text(encoding="utf-8")
     gen[".claude/settings.json"] = project_settings(cfg)
     if cfg["taskboard"]["enabled"] and cfg["taskboard"]["mcp"]:
         gen[".mcp.json"] = json.dumps({"mcpServers": {"taskboard": {
@@ -531,7 +531,7 @@ def build(company_dir, dry_run=False, force=False):
     cfg = load_company(company_dir)
     gen, once, dirs = plan(company_dir, cfg)
     manifest_path = company_dir / MANIFEST
-    old = set(json.loads(manifest_path.read_text())) if manifest_path.exists() else set()
+    old = set(json.loads(manifest_path.read_text(encoding="utf-8"))) if manifest_path.exists() else set()
     log = {"write": [], "unchanged": [], "create": [], "skip-user-file": [], "remove-stale": [], "mkdir": []}
 
     for rel, content in gen.items():
@@ -539,20 +539,20 @@ def build(company_dir, dry_run=False, force=False):
         if p.exists() and rel not in old and not force:
             log["skip-user-file"].append(rel)
             continue
-        if p.exists() and p.read_text() == content:
+        if p.exists() and p.read_text(encoding="utf-8") == content:
             log["unchanged"].append(rel)
             continue
         log["write"].append(rel)
         if not dry_run:
             p.parent.mkdir(parents=True, exist_ok=True)
-            p.write_text(content)
+            p.write_text(content, encoding="utf-8")
     for rel, content in once.items():
         p = company_dir / rel
         if not p.exists():
             log["create"].append(rel)
             if not dry_run:
                 p.parent.mkdir(parents=True, exist_ok=True)
-                p.write_text(content)
+                p.write_text(content, encoding="utf-8")
     for rel in sorted(old - set(gen)):
         if (company_dir / rel).exists():
             log["remove-stale"].append(rel)
@@ -566,7 +566,7 @@ def build(company_dir, dry_run=False, force=False):
                 p.mkdir(parents=True)
                 (p / ".gitkeep").touch()
     if not dry_run:
-        manifest_path.write_text(json.dumps(sorted(set(gen) - set(log["skip-user-file"])), indent=1) + "\n")
+        manifest_path.write_text(json.dumps(sorted(set(gen) - set(log["skip-user-file"])), indent=1) + "\n", encoding="utf-8")
 
     print(f"{'[dry run] ' if dry_run else ''}{cfg['company']['name']}: {len(cfg['roles'])} roles, "
           f"{len({s for r in cfg['roles'] for s in r['skills']})} skills, {len(cfg['workflows']['use'])} workflows")
@@ -629,7 +629,7 @@ def examples():
     out = {}
     for d in sorted(EXAMPLES.iterdir()):
         if (d / "company.toml").exists():
-            first = (d / "company.toml").read_text().split("\n", 1)[0]
+            first = (d / "company.toml").read_text(encoding="utf-8").split("\n", 1)[0]
             out[d.name] = first.split(":", 1)[-1].strip() if first.startswith("#") else ""
     return out
 
@@ -691,7 +691,7 @@ def main():
             cdir = Path(a.dir).resolve() if a.dir else None
             for name, origin in available(a.kind, cdir).items():
                 path = find(a.kind, name, cdir)
-                text = path.read_text()
+                text = path.read_text(encoding="utf-8")
                 desc = load_toml(path).get("description", "") if a.kind == "roles" else frontmatter_field(text, "description")
                 print(f"{name:22} [{origin}] {desc[:100]}")
     except ConfigError as e:

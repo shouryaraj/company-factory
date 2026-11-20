@@ -30,7 +30,7 @@ MAX_EVENTS = 200
 
 def read(path):
     try:
-        return path.read_text()
+        return path.read_text(encoding="utf-8")
     except OSError:
         return ""
 
@@ -152,14 +152,14 @@ def seed_demo(cfg, company_dir):
             lane = lanes[-1] if (i + j) % 5 == 0 else lanes[1 if (i + j) % 2 else 0]
             rows.append(f"| {prefix}-{n} | {lane} | {role['id']} | {title} | reviewed by the {cfg['orchestrator']['title']} |")
             if lane == lanes[-1]:
-                (company_dir / "handoffs" / f"{prefix}-{n}-{role['id']}.md").write_text(f"# {prefix}-{n}: {title}\n\nDone.\n")
+                (company_dir / "handoffs" / f"{prefix}-{n}-{role['id']}.md").write_text(f"# {prefix}-{n}: {title}\n\nDone.\n", encoding="utf-8")
     board = company_dir / "company" / "board.md"
-    board.write_text(board.read_text() + "\n".join(rows) + "\n")
+    board.write_text(board.read_text(encoding="utf-8") + "\n".join(rows) + "\n", encoding="utf-8")
     first = cfg["roles"][0]["id"]
     approvals = company_dir / "company" / "approvals.md"
-    approvals.write_text(approvals.read_text().replace("## Decided", (
+    approvals.write_text(approvals.read_text(encoding="utf-8").replace("## Decided", (
         f"- [ ] A-001 ({first}, demo): Publish the launch post | ready | low | approve\n"
-        f"- [ ] A-002 ({cfg['roles'][-1]['id']}, demo): Spend $40/month on an error-tracking plan | needed for beta | low | approve\n\n## Decided")))
+        f"- [ ] A-002 ({cfg['roles'][-1]['id']}, demo): Spend $40/month on an error-tracking plan | needed for beta | low | approve\n\n## Decided")), encoding="utf-8")
 
 
 class EventLog:

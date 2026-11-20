@@ -48,7 +48,7 @@ def label(tool, inp):
 
 def main():
     try:
-        e = json.load(sys.stdin)
+        e = json.loads(sys.stdin.buffer.read().decode("utf-8", "replace"))
     except ValueError:
         return
     ev = e.get("hook_event_name", "")
@@ -73,7 +73,7 @@ def main():
     if LOG.exists() and LOG.stat().st_size > MAX_BYTES:
         tail = LOG.read_bytes()[-MAX_BYTES // 2:]
         LOG.write_bytes(tail[tail.find(b"\n") + 1:])
-    with open(LOG, "a") as f:
+    with open(LOG, "a", encoding="utf-8") as f:
         f.write(json.dumps(out) + "\n")
 
 
