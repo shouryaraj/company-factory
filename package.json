@@ -1,0 +1,34 @@
+{
+  "name": "company-factory",
+  "version": "0.3.0",
+  "description": "Describe a company in one config file. Get a team of Claude Code agents that runs it, and a live pixel office to watch them work.",
+  "license": "MIT",
+  "type": "module",
+  "bin": { "company-factory": "dist/cli.js" },
+  "files": ["dist", "library", "examples", "README.md", "LICENSE"],
+  "engines": { "node": ">=20" },
+  "repository": { "type": "git", "url": "git+https://github.com/shouryaraj/company-factory.git" },
+  "homepage": "https://github.com/shouryaraj/company-factory",
+  "bugs": "https://github.com/shouryaraj/company-factory/issues",
+  "keywords": ["claude-code", "ai-agents", "multi-agent", "subagents", "agentic", "pixel-art", "mcp", "config"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json && node scripts/build-web.mjs",
+    "prepare": "npm run build",
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p web/tsconfig.json --noEmit",
+    "test": "npm run build && vitest run",
+    "demo": "npm run build && node dist/cli.js demo"
+  },
+  "dependencies": {
+    "smol-toml": "1.9.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "4.3.3",
+    "@types/node": "22.20.5",
+    "esbuild": "0.28.2",
+    "htm": "3.1.1",
+    "preact": "10.29.8",
+    "tailwindcss": "4.3.3",
+    "typescript": "5.9.3",
+    "vitest": "3.2.7"
+  }
+}

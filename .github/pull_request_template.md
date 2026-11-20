@@ -1,4 +1,4 @@
-- [ ] Tests added or updated (`python3 -m unittest discover -s tests`)
+- [ ] Tests added or updated (`npm test`, `npm run typecheck`)
 - [ ] `docs/config.md` updated for any new config key
 - [ ] `CHANGELOG.md` entry under *Unreleased*
 - [ ] Screenshot or GIF for visual changes

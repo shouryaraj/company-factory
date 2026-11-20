@@ -16,6 +16,7 @@ principles = [
 title = "Managing Editor"
 
 [taskboard]
+enabled = true         # Taskboard kanban + MCP (prerequisite: brew install tcarac/taskboard/taskboard); false = company/board.md
 prefix = "SN"
 lanes = ["ideas", "researching", "drafting", "editing", "needs_founder", "published"]
 

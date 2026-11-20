@@ -7,6 +7,6 @@ labels: bug
 
 **What you expected:**
 
-**Versions:** `company-factory --version`, `python3 --version`, `claude --version`, OS:
+**Versions:** `company-factory --version`, `node --version`, `taskboard --help | head -1`, `claude --version`, OS:
 
 **Relevant `company.toml` snippet** (remove anything private):

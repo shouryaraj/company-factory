@@ -67,11 +67,11 @@ enable = ["document-skills@anthropic-agent-skills", "example-skills@anthropic-ag
 ## [taskboard]
 | Key | Default | Meaning |
 |---|---|---|
-| `enabled` | `false` | `true`: tickets live in Taskboard via MCP. `false`: in `company/board.md`. |
+| `enabled` | `false` | `true`: tickets live in [Taskboard](taskboard.md) via MCP (install it first; the examples turn this on). `false`: in `company/board.md`. |
 | `project` | `"<name> HQ"` | Taskboard project name. |
 | `prefix` | `"TASK"` | Ticket key prefix, 2-8 uppercase letters or digits. |
 | `lanes` | `backlog todo in_progress review needs_founder done` | Board columns, in order. The last lane counts as done; `needs_founder` feeds *Needs you*. |
-| `command` | `"taskboard"` | Taskboard binary registered in `.mcp.json` as `<command> mcp`. |
+| `command` | `"taskboard"` | Taskboard binary (name on PATH or absolute path), registered in `.mcp.json` as `<command> mcp` and checked by `doctor`. |
 | `mcp` | `true` | Write `.mcp.json`. Set `false` if you registered Taskboard yourself. |
 
 ## [office]

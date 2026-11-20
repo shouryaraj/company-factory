@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.0
+- **Rewritten in TypeScript.** Node 20+, strict TypeScript, one runtime dependency (`smol-toml`). Install with `npm install -g github:shouryaraj/company-factory`, or try it with `npx github:shouryaraj/company-factory demo`. Generated companies are unchanged; rebuilding replaces the Python hook with `.claude/hooks/office-event.mjs` (run with `node`). Default looks are identical, so everyone keeps their face.
+- **Office UI**: a Preact + htm app styled with Tailwind (`web/app.ts`), with the canvas in `web/scene.ts`, bundled by esbuild into `dist/web`.
+- **Taskboard is a documented prerequisite**: the examples use it, the README lists it under Prerequisites, `build` warns when it is not installed, and the demo still runs without it.
+- **`company-factory doctor [<dir>]`** checks Node, Claude Code, Taskboard (installed, running, project set up), marketplace plugins and the office hooks.
+- Tests moved to vitest; CI builds, typechecks and tests on Linux, macOS and Windows.
+
 ## 0.2.0
 - **Installable**: `pipx install git+https://github.com/shouryaraj/company-factory`, or `uvx --from git+… company-factory demo`. `python3 factory.py` still works from a clone.
 - **`company-factory demo`**: try the office with a sample company and scripted activity in 30 seconds.

@@ -20,6 +20,7 @@ principles = [
 title = "Maintainer on Duty"
 
 [taskboard]
+enabled = true         # Taskboard kanban + MCP (prerequisite: brew install tcarac/taskboard/taskboard); false = company/board.md
 prefix = "ORB"
 
 [defaults]

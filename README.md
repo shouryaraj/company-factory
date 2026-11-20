@@ -11,32 +11,41 @@ You are the founder. You write `company.toml`: the mission, the roles, their ski
 - anything external, irreversible, financial or directional waits in **your approvals inbox**;
 - the **office** shows all of it live: who is working on what, which ticket is where, what is waiting on you.
 
-Python 3.11+ standard library, one HTML page, no build step, no cloud service. MIT.
+TypeScript on Node, one small runtime dependency, no cloud service. MIT.
 
 ## Try it in 30 seconds
 
 ```bash
-uvx --from git+https://github.com/shouryaraj/company-factory company-factory demo
+npx github:shouryaraj/company-factory demo
 ```
-This builds a sample company in a temp folder and opens its office with scripted activity. No Claude session needed. Other demos: `--example open-source` or `--example content-studio`.
+This builds a sample company in a temp folder and opens its office with scripted activity. You only need Node 20+; no Claude session, no Taskboard. Other demos: `--example open-source` or `--example content-studio`.
 
-Without `uv`: `pipx run --spec git+https://github.com/shouryaraj/company-factory company-factory demo`.
+## Prerequisites
+
+| Need | Why | Install |
+|---|---|---|
+| **Node 20+** | runs company-factory and the office hook | [nodejs.org](https://nodejs.org) |
+| **Claude Code** | runs the agents | [docs.claude.com/claude-code](https://docs.claude.com/en/docs/claude-code) |
+| **Taskboard** | the company's kanban board and its MCP server (`/setup-board`, tickets, the office board) | `brew tap tcarac/taskboard && brew install taskboard`, then `taskboard start` ([tcarac/taskboard](https://github.com/tcarac/taskboard)) |
+
+The examples use Taskboard. To skip it, set `[taskboard] enabled = false`: tickets then live in `company/board.md`.
+`company-factory doctor ./acme` checks all of this and tells you what is missing.
 
 ## Start your own company
 
 ```bash
-pipx install git+https://github.com/shouryaraj/company-factory   # or: uv tool install git+https://...
+npm install -g github:shouryaraj/company-factory
 
 company-factory init ./acme --example saas    # or starter, open-source, content-studio
 $EDITOR ./acme/company.toml                    # make it yours
 company-factory build ./acme                   # generate the workspace (safe to re-run)
 company-factory plugins ./acme --install       # one-time: install the marketplace skills
+company-factory doctor ./acme                  # check Node, Claude Code, Taskboard, plugins
 
-company-factory office ./acme --open           # terminal 1: the live office
-cd acme && claude                              # terminal 2: /kickoff <goal>, /standup, /approvals
+taskboard start                                # terminal 1: the board (http://localhost:3010)
+company-factory office ./acme --open           # terminal 2: the live office (http://127.0.0.1:4477)
+cd acme && claude                              # terminal 3: /setup-board once, then /kickoff <goal>, /standup
 ```
-
-Prefer not to install? Clone the repo and use `python3 factory.py <command>` instead of `company-factory`.
 
 ## What you get
 
@@ -121,9 +130,9 @@ Everything is optional except a name, a mission and at least one role. Full refe
 
 Privacy and security: the hook records only the event, the agent, the tool and a few-word label. Prompts, file contents and tool output are never recorded. The server only reads: it cannot change files or run commands, it listens on localhost only, and it checks the `Host` header so other websites cannot read it. Details: [docs/office.md](docs/office.md).
 
-## Taskboard (optional)
+## Taskboard
 
-By default tickets live in `company/board.md`. For a real kanban board with an MCP server, use [Taskboard](https://github.com/tcarac/taskboard):
+Tickets live in [Taskboard](https://github.com/tcarac/taskboard), a local kanban board with an MCP server (a prerequisite; see above). Set `[taskboard] enabled = false` to use a plain `company/board.md` instead.
 
 ```bash
 brew tap tcarac/taskboard && brew install taskboard
@@ -144,6 +153,7 @@ prefix = "ACME"
 | `demo [--example NAME]` | build a sample company in a temp folder and open its office with scripted activity |
 | `init <dir> [--example NAME]` | copy an example's config and plug-ins (never overwrites) |
 | `validate <dir>` | check the config and report every problem at once |
+| `doctor [<dir>]` | check prerequisites: Node, Claude Code, Taskboard (installed, running, set up), plugins, hooks |
 | `build <dir> [--dry-run] [--force]` | generate or update the workspace |
 | `plugins <dir> [--install]` | print or run the commands that install the company's marketplace plugins |
 | `office <dir> [--port N] [--open] [--demo]` | serve the live office |
@@ -158,12 +168,12 @@ prefix = "ACME"
 
 **Can I use my own roles and skills?** Yes. Put them in `<company>/custom/` (they can override a built-in with the same id), or add them to the library and send a PR.
 
-**Windows?** The factory and office are pure Python and should work. The hook command uses `python3`. Reports welcome.
+**Windows?** CI runs on Windows. The hook runs with `node`, so Node must be on your PATH. Reports welcome.
 
 ## Contributing
 
-New roles, skills, examples and office art are all welcome. See [CONTRIBUTING.md](CONTRIBUTING.md). Run the tests with `python3 -m unittest discover -s tests`.
+New roles, skills, examples and office art are all welcome. See [CONTRIBUTING.md](CONTRIBUTING.md). Run the tests with `npm test`.
 
 ## License
 
-MIT. The office art is original and drawn in code. The vendored [htm](https://github.com/developit/htm) + [Preact](https://preactjs.com) bundle keeps its own Apache-2.0 / MIT licenses (`src/company_factory/library/office/vendor/LICENSES.md`).
+MIT. The office art is original and drawn in code. The UI bundles [Preact](https://preactjs.com) (MIT) and [htm](https://github.com/developit/htm) (Apache-2.0); their license notices ship in `dist/web/app.js`.

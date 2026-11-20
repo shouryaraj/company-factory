@@ -6,7 +6,7 @@ company-factory office <company dir> [--port 4477] [--open] [--demo]
 
 ## How it works
 ```
-Claude Code ──hooks──> .claude/hooks/office_event.py ──append──> .office/events.jsonl
+Claude Code ──hooks──> .claude/hooks/office-event.mjs ──append──> .office/events.jsonl
                                                                      │ tail
 company.toml, company/*.md, handoffs/, Taskboard API ──read──> office server ──SSE──> browser
 ```
@@ -37,7 +37,7 @@ The hook writes one line per event: time, event name, agent type, tool name and 
 ## Security
 - The server only reads. It has no endpoint that writes a file or runs anything.
 - It binds to `127.0.0.1` and rejects requests whose `Host` header is not `127.0.0.1:<port>` or `localhost:<port>`, which blocks DNS-rebinding reads from other websites.
-- Static files are an allow-list (the page and one vendored script).
+- Static files are an allow-list: the page, one script and one stylesheet.
 
 ## Already have `.claude/settings.json`?
 `build` never overwrites a file it did not create. Merge in the hooks from `company-factory office-hooks`.
@@ -46,4 +46,4 @@ The hook writes one line per event: time, event name, agent type, tool name and 
 `?demo` on the URL (or `--demo`, or `company-factory demo`) plays scripted activity on top of the real data. Tickets move across the board in the browser only; nothing is written.
 
 ## Frontend
-One HTML file: a `<canvas>` for the office (drawn in code, no sprite files) and a sidebar built with [htm](https://github.com/developit/htm) + [Preact](https://preactjs.com) (about 5 KB, vendored, no build step).
+Written in TypeScript under `web/`: `scene.ts` draws the office on a `<canvas>` (all in code, no sprite files); `app.ts` is a [Preact](https://preactjs.com) + [htm](https://github.com/developit/htm) app styled with [Tailwind](https://tailwindcss.com). `npm run build` bundles them with esbuild into `dist/web` (about 40 KB of JS and 12 KB of CSS), so users never run a build and the page works offline.

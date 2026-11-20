@@ -1,0 +1,38 @@
+/* Tailwind source for the office UI; compiled to dist/web/office.css by `npm run build`. */
+@import "tailwindcss";
+@source "./app.ts";
+
+/* data-theme="dark" (set by the theme toggle) or the OS preference when the toggle is on auto */
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-panel: var(--panel);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-warn: var(--warn);
+  --color-ok: var(--ok);
+  --color-away: #e0a030;
+  --color-chip: var(--chip);
+  --font-mono: ui-monospace, Menlo, monospace;
+}
+
+@layer base {
+  :root {
+    --bg: #f4f1ea; --panel: #fffdf8; --ink: #1f2430; --muted: #6b6f7b; --line: #e3ddd0;
+    --accent: #3d85c6; --warn: #d1495b; --ok: #4f9d69; --chip: #f0ebe0;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #14161d; --panel: #1c1f28; --ink: #e8e6e1; --muted: #9a9ca6; --line: #2c303c;
+      --accent: #6fa8dc; --warn: #ef6f7f; --ok: #73c08a; --chip: #262a35;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #14161d; --panel: #1c1f28; --ink: #e8e6e1; --muted: #9a9ca6; --line: #2c303c;
+    --accent: #6fa8dc; --warn: #ef6f7f; --ok: #73c08a; --chip: #262a35;
+  }
+  body { @apply bg-bg text-ink text-[13px] leading-[1.45]; }
+}
