@@ -9,11 +9,11 @@ from contextlib import redirect_stdout
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(ROOT))
-import factory  # noqa: E402
-import office  # noqa: E402
+sys.path.insert(0, str(ROOT / "src"))
+from company_factory import cli as factory  # noqa: E402
+from company_factory import office  # noqa: E402
 
-HOOK = ROOT / "library" / "office" / "office_event.py"
+HOOK = ROOT / "src" / "company_factory" / "library" / "office" / "office_event.py"
 
 
 def make_company(tmp, extra=""):
@@ -87,6 +87,75 @@ class Build(unittest.TestCase):
                 factory.build(d)
             self.assertEqual((d / ".claude/settings.json").read_text(), '{"mine": true}')
             self.assertIn("office-hooks", out.getvalue())
+
+
+    def test_taskboard_mcp_registered_only_when_enabled(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            d = make_company(tmp)
+            with redirect_stdout(io.StringIO()):
+                factory.build(d)
+            self.assertFalse((d / ".mcp.json").exists())
+            (d / "company.toml").write_text((d / "company.toml").read_text().replace("enabled = false", "enabled = true"))
+            with redirect_stdout(io.StringIO()):
+                factory.build(d)
+            mcp = json.loads((d / ".mcp.json").read_text())["mcpServers"]["taskboard"]
+            self.assertEqual((mcp["command"], mcp["args"]), ("taskboard", ["mcp"]))
+
+
+class Plugins(unittest.TestCase):
+    def test_default_marketplace_plugins_land_in_settings_and_agents(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            d = make_company(tmp)
+            with redirect_stdout(io.StringIO()):
+                factory.build(d)
+            settings = json.loads((d / ".claude/settings.json").read_text())
+            self.assertEqual(settings["extraKnownMarketplaces"]["anthropic-agent-skills"]["source"],
+                             {"source": "github", "repo": "anthropics/skills"})
+            self.assertTrue(settings["enabledPlugins"]["document-skills@anthropic-agent-skills"])
+            agent = (d / ".claude/agents/engineer.md").read_text()
+            self.assertIn("skills: code-change, debugging", agent)
+            self.assertIn("example-skills:webapp-testing", agent)
+
+    def test_plugins_can_be_turned_off_and_are_validated(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            d = make_company(tmp, '[plugins]\nenable = []\n')
+            text = (d / "company.toml").read_text().replace('use = "engineer"', 'use = "engineer"\nplugin_skills = []', 1)
+            text = text.replace('use = "product-manager"', 'use = "product-manager"\nplugin_skills = []', 1)
+            text = text.replace('use = "qa-engineer"', 'use = "qa-engineer"\nplugin_skills = []', 1)
+            text = text.replace('use = "growth-marketer"', 'use = "growth-marketer"\nplugin_skills = []', 1)
+            (d / "company.toml").write_text(text)
+            with redirect_stdout(io.StringIO()):
+                factory.build(d)
+            self.assertNotIn("enabledPlugins", json.loads((d / ".claude/settings.json").read_text()))
+        with tempfile.TemporaryDirectory() as tmp:
+            d = make_company(tmp, '[plugins]\nenable = []\n')
+            with self.assertRaises(factory.ConfigError) as e:
+                factory.load_company(d)
+            self.assertIn("plugin skill `example-skills:webapp-testing`", str(e.exception))
+
+
+class Examples(unittest.TestCase):
+    def test_every_example_builds(self):
+        for name in factory.examples():
+            with self.subTest(name), tempfile.TemporaryDirectory() as tmp:
+                d = Path(tmp)
+                with redirect_stdout(io.StringIO()):
+                    factory.init(d, name)
+                    factory.build(d)
+                self.assertTrue((d / "CLAUDE.md").exists())
+
+    def test_demo_seed_fills_board_and_inbox(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            d = Path(tmp)
+            with redirect_stdout(io.StringIO()):
+                factory.init(d, "saas")
+                factory.build(d)
+            cfg = factory.load_company(d)
+            office.seed_demo(cfg, d)
+            s = office.snapshot(cfg, d)
+            self.assertGreaterEqual(len(s["tickets"]), 8)
+            self.assertEqual(len(s["approvals"]), 2)
+            self.assertTrue(s["handoffs"])
 
 
 class Hook(unittest.TestCase):

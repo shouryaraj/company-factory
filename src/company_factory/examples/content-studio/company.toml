@@ -1,0 +1,78 @@
+# content-studio: weekly newsletter + video studio, non-software roles
+#   Edit, then rebuild:  company-factory build .
+# Signal & Noise is fictional. Shows that a "company" does not have to write code.
+
+[company]
+name = "Signal & Noise"
+mission = "A weekly newsletter and video that explain one hard idea in AI to busy engineers, accurately."
+founder_title = "Editor-in-Chief"
+principles = [
+  "Accuracy over speed: every claim has a source link.",
+  "One idea per issue, explained so a tired engineer gets it in five minutes.",
+  "Nothing is published without the Editor-in-Chief.",
+]
+
+[orchestrator]
+title = "Managing Editor"
+
+[taskboard]
+prefix = "SN"
+lanes = ["ideas", "researching", "drafting", "editing", "needs_founder", "published"]
+
+[defaults]
+model = "sonnet"
+
+[[goals]]
+objective = "Grow to 5,000 subscribers"
+key_results = ["Publish every Tuesday for 12 weeks", "Open rate above 50%", "3 issues shared by people we did not ask"]
+
+[[roles]]
+use = "market-researcher"
+id = "researcher"
+title = "Researcher"
+description = "Finds and verifies sources for the week's idea: papers, docs, talks. Use before any draft."
+mission = "Every claim in an issue traces to a primary source."
+owns = ["research/"]
+
+[[roles]]
+id = "writer"
+department = "newsroom"
+title = "Staff Writer"
+description = "Drafts the newsletter issue and the video script from the research brief. Use for any long-form draft."
+mission = "Explain one hard idea so clearly that readers forward it."
+skills = ["newsletter-issue", "content-writing"]
+owns = ["issues/"]
+done = ["Draft in `issues/<date>-<slug>.md`, every claim linked, under 1,200 words."]
+look = { shirt = "#ef476f", hair_style = "long", accessory = "glasses" }
+
+[[roles]]
+use = "designer"
+title = "Visual Designer"
+description = "Makes diagrams, thumbnails and the issue header. Use when an idea needs a picture."
+owns = ["visuals/"]
+
+[[roles]]
+use = "growth-marketer"
+id = "distribution"
+title = "Distribution Lead"
+owns = ["distribution/"]
+
+[[roles]]
+use = "finance-ops"
+title = "Sponsorships & Ops"
+
+[office]
+title = "Signal & Noise Newsroom"
+theme = "night"
+
+[[office.rooms]]
+id = "newsroom"
+title = "Newsroom"
+roles = ["researcher", "writer"]
+floor = "#e3d5b0"
+
+[[office.rooms]]
+id = "studio"
+title = "Studio"
+roles = ["designer", "distribution", "finance-ops"]
+floor = "#d4c8e2"

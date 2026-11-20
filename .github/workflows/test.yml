@@ -2,17 +2,29 @@ name: test
 on: [push, pull_request]
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
+        os: [ubuntu-latest]
         python: ["3.11", "3.12", "3.13"]
+        include:
+          - os: macos-latest
+            python: "3.13"
+          - os: windows-latest
+            python: "3.13"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
       - run: python -m unittest discover -s tests -v
-      - run: |
-          python factory.py init /tmp/co --example flightscope
-          python factory.py build /tmp/co
-          python factory.py validate /tmp/co
+      - name: install and build every example
+        shell: bash
+        run: |
+          python -m pip install .
+          company-factory --version
+          for ex in $(company-factory list examples | cut -d' ' -f1); do
+            company-factory init "$RUNNER_TEMP/$ex" --example "$ex"
+            company-factory build "$RUNNER_TEMP/$ex"
+            company-factory validate "$RUNNER_TEMP/$ex"
+          done

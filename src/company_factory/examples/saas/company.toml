@@ -1,0 +1,97 @@
+# saas: B2B SaaS startup with 8 roles, custom rooms and looks
+#   Edit, then rebuild:  company-factory build .
+# Paperplane is fictional. Swap in your own company and keep the structure.
+
+[company]
+name = "Paperplane"
+mission = "Turn every support ticket into a product decision for small software teams."
+founder_title = "Founder"
+bet = """
+A Slack + help-desk integration that clusters incoming tickets into themes, links them to the roadmap,
+and tells the team each Monday which three problems cost them the most customers.
+"""
+icp = """
+B2B SaaS teams of 5-50 people who use Intercom, Zendesk or Help Scout and have no dedicated product ops.
+Not now: enterprises with their own analytics teams.
+"""
+principles = [
+  "Talk to five customers before building anything bigger than a day.",
+  "Ship weekly; every release has a changelog entry.",
+  "Cheap failure is fine; hidden failure is not.",
+]
+
+[orchestrator]
+title = "Chief of Staff"
+
+[taskboard]
+enabled = false        # true = use the Taskboard MCP server; false = company/board.md
+prefix = "PP"
+
+[defaults]
+model = "sonnet"
+
+[policy]
+extra_rules = ["Customer data never leaves `customers/`; anonymise quotes before they appear anywhere else."]
+
+[[goals]]
+objective = "Find product-market pull (by end of quarter)"
+key_results = ["15 customer interviews", "5 teams using the beta weekly", "3 say they would be very disappointed without it"]
+
+[[goals]]
+objective = "Ship the Monday digest"
+key_results = ["Zendesk + Intercom import", "Theme clustering with >80% agreement on a labelled set", "Digest email sent to beta teams"]
+
+[[roles]]
+use = "product-manager"
+look = { shirt = "#e07a5f", hair_style = "bun", accessory = "glasses" }
+
+[[roles]]
+use = "tech-lead"
+model = "opus"
+look = { shirt = "#3d405b", hair_style = "short", accessory = "headset" }
+
+[[roles]]
+use = "engineer"
+owns = ["app/"]
+look = { shirt = "#3d85c6", hair_style = "spiky", accessory = "headset" }
+
+[[roles]]
+use = "qa-engineer"
+owns_add = ["app/tests/"]
+
+[[roles]]
+use = "designer"
+
+[[roles]]
+use = "customer-researcher"
+look = { shirt = "#81b29a", hair_style = "long" }
+
+[[roles]]
+use = "growth-marketer"
+look = { shirt = "#f2cc8f", accessory = "cap" }
+
+[[roles]]
+use = "sales-dev"
+
+# The office: company-factory office .   (or: company-factory demo --example saas)
+[office]
+title = "Paperplane HQ"
+founder_look = { shirt = "#2b2f3a", hair_style = "short", accessory = "none" }
+
+[[office.rooms]]
+id = "build"
+title = "Build"
+roles = ["tech-lead", "engineer", "qa-engineer"]
+floor = "#b9cbd9"
+
+[[office.rooms]]
+id = "discover"
+title = "Discover"
+roles = ["product-manager", "designer", "customer-researcher"]
+floor = "#e3d5b0"
+
+[[office.rooms]]
+id = "go-to-market"
+title = "Go-to-market"
+roles = ["growth-marketer", "sales-dev"]
+floor = "#c9d8b6"

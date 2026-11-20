@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "company-factory"
+dynamic = ["version"]
+description = "Build a one-human, many-agent company for Claude Code from one config file, and watch it work in a live pixel office."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.11"
+dependencies = []
+keywords = ["claude-code", "ai-agents", "multi-agent", "agentic", "subagents", "pixel-art", "config"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Topic :: Software Development",
+]
+
+[project.urls]
+Homepage = "https://github.com/shouryaraj/company-factory"
+Issues = "https://github.com/shouryaraj/company-factory/issues"
+Changelog = "https://github.com/shouryaraj/company-factory/blob/main/CHANGELOG.md"
+
+[project.scripts]
+company-factory = "company_factory.cli:main"
+
+[tool.setuptools.dynamic]
+version = { attr = "company_factory.__version__" }
+
+[tool.setuptools.package-data]
+company_factory = ["library/**/*", "examples/**/*"]
